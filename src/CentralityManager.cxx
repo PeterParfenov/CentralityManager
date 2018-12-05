@@ -68,14 +68,14 @@ void CentralityManager::FillMultBins()
 	Float_t one_tenth = hMult->Integral("WIDTH") / NmultiplicityBins; //the fraction of events equal to on centrality bin
 
 	Int_t n_mult_bins = hMult->GetNbinsX(); //total number of bins in multiplicity histogram
-	multiplicity_bins[0] = 0.;							// the first bin is always zero
-	for (int i = 1; i <= NmultiplicityBins; ++i)
+	multiplicity_bins[NmultiplicityBins] = 0.;							// the first bin is always zero
+	for (int i = 1; i < NmultiplicityBins; ++i)
 	{
 		Float_t sum = one_tenth * i;
-		multiplicity_bins[i] = Integrate(n_mult_bins, sum);
+		multiplicity_bins[NmultiplicityBins - i] = Integrate(n_mult_bins, sum);
 	}
 	//the last bin is always the last
-	multiplicity_bins[NmultiplicityBins] = hMult->GetBinLowEdge(n_mult_bins) + hMult->GetBinWidth(1);
+	multiplicity_bins[0] = hMult->GetBinLowEdge(n_mult_bins) + hMult->GetBinWidth(1);
 	isMultBinsFilled = true;
 }
 
@@ -84,7 +84,7 @@ void CentralityManager::PrintCentrality()
 	FillMultBins();
 
 	for (int i = 0; i <= NmultiplicityBins; ++i)
-		std::cout << "multiplicity bin = " << multiplicity_bins[i] << std::endl;
+		std::cout << "multiplicity bin[" << i << "] = " << multiplicity_bins[i] << std::endl;
 }
 
 void CentralityManager::DisectTH1()
